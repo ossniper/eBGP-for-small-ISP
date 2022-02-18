@@ -1,0 +1,47 @@
+interface GigabitEthernet1
+ description *connection to UPSTREAM_ISP-2*
+ ip address 10.10.10.2 255.255.255.254
+
+
+interface GigabitEthernet2
+ description *connection to UPSTREAM_ISP-2*
+ ip address 192.20.20 255.255.255.252
+
+
+interface GigabitEthernet3
+ description *connection to ENT-1_no bgp peering*
+ ip address 102.100.0.2 255.255.255.0
+
+interface GigabitEthernet4
+ description *connection to START_UP-ISP*
+ ip address 102.100.2.2 255.255.255.248
+
+
+ip route 102.100.0.0 255.255.252.0 Null0
+ip route 102.100.0.0 255.255.254.0 null0
+ip route 102.100.2.0 255.255.254.0 null0
+
+ip prefix-list ISP-1 seq 10 permit 102.100.0.0/23
+ip prefix-list ISP-1 seq 10 permit 102.100.0.0/24
+
+ip prefix-list ISP-2 seq 5 permit 102.100.2.0/23
+ip prefix-list ISP-2 seq 10 permit 172.30.0.0/24
+
+router bgp 65000
+ bgp router-id 10.10.10.10
+ bgp log-neighbor-changes
+ neighbor 10.10.10.1 remote-as 65002
+ neighbor 192.20.20.1 remote-as 65001
+ neighbor 102.100.2.1 remote-as 65003
+ 
+ !
+  address-family ipv4
+  network 102.100.0.0 mask 255.255.252.0
+  network 102.100.0.0 mask 255.255.254.0      
+  network 102.100.2.0 mask 255.255.254.0
+  network 172.30.0.0 mask 255.255.255.0     
+  neighbor 10.10.10.1 activate
+  neighbor 192.20.20.1 activate
+  neighbor 102.100.2.1 activate
+  neighbor 192.20.20.1 prefix-list ISP-1 out
+  neighbor 10.10.10.1 prefix-list ISP-2 out
