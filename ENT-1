@@ -1,0 +1,10 @@
+(NO ASN or BGP peer)
+
+interface GigabitEthernet0/0
+ description *connection to START_UP-ISP*
+ ip address 102.100.0.1 255.255.255.0
+ duplex auto
+ speed auto
+
+ip route 0.0.0.0 0.0.0.0 102.100.0.2
+
